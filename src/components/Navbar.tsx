@@ -107,6 +107,12 @@ const Navbar = () => {
             
             {user ? (
               <>
+                <Link to="/orders" className="hidden sm:block">
+                  <Button variant="outline" size="sm">
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    My Orders
+                  </Button>
+                </Link>
                 <Link to="/profile" className="hidden sm:block">
                   <Button variant="outline" size="sm">
                     <User className="h-4 w-4 mr-2" />
@@ -176,6 +182,13 @@ const Navbar = () => {
               
               {user ? (
                 <>
+                  <Link 
+                    to="/orders" 
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    My Orders
+                  </Link>
                   <Link 
                     to="/profile" 
                     className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
