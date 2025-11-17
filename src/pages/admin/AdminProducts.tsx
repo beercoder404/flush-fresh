@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Plus } from 'lucide-react';
+import { z } from 'zod';
 
 interface Product {
   id: string;
@@ -24,6 +25,41 @@ interface Product {
   ingredients: string[];
   how_to_use: string[];
 }
+
+const productSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(1, "Product name is required")
+    .max(100, "Product name must be less than 100 characters"),
+  description: z.string()
+    .trim()
+    .min(1, "Description is required")
+    .max(1000, "Description must be less than 1000 characters"),
+  price: z.number()
+    .positive("Price must be a positive number")
+    .min(0.01, "Price must be at least 0.01"),
+  size: z.string()
+    .trim()
+    .min(1, "Size is required")
+    .max(50, "Size must be less than 50 characters"),
+  category: z.string()
+    .trim()
+    .min(1, "Category is required")
+    .max(50, "Category must be less than 50 characters"),
+  image_url: z.string()
+    .trim()
+    .url("Must be a valid URL")
+    .max(500, "Image URL must be less than 500 characters"),
+  benefits: z.array(z.string().trim().max(200, "Each benefit must be less than 200 characters"))
+    .min(1, "At least one benefit is required")
+    .max(20, "Maximum 20 benefits allowed"),
+  ingredients: z.array(z.string().trim().max(200, "Each ingredient must be less than 200 characters"))
+    .min(1, "At least one ingredient is required")
+    .max(50, "Maximum 50 ingredients allowed"),
+  how_to_use: z.array(z.string().trim().max(300, "Each instruction must be less than 300 characters"))
+    .min(1, "At least one instruction is required")
+    .max(20, "Maximum 20 instructions allowed")
+});
 
 const AdminProductsContent = () => {
   const { toast } = useToast();
@@ -149,6 +185,21 @@ const AdminProductsContent = () => {
       ingredients: formData.ingredients.split('\n').filter(i => i.trim()),
       how_to_use: formData.how_to_use.split('\n').filter(h => h.trim())
     };
+
+    // Validate the product data
+    try {
+      productSchema.parse(productData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const firstError = error.errors[0];
+        toast({
+          title: 'Validation Error',
+          description: firstError.message,
+          variant: 'destructive'
+        });
+        return;
+      }
+    }
 
     if (editingProduct) {
       updateMutation.mutate({ id: editingProduct.id, data: productData });
