@@ -1,5 +1,6 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useProducts } from "@/hooks/useProducts";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Check } from "lucide-react";
@@ -7,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -14,6 +16,14 @@ const ProductDetail = () => {
   const product = products?.find(p => p.id === id);
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAdmin) {
+      navigate('/admin/dashboard');
+    }
+  }, [isAdmin, navigate]);
   
   const handleAddToCart = () => {
     if (product) {
@@ -24,6 +34,10 @@ const ProductDetail = () => {
       });
     }
   };
+
+  if (isAdmin) {
+    return null;
+  }
 
   if (isLoading) {
     return (

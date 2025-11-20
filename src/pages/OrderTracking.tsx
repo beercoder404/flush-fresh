@@ -105,32 +105,34 @@ const OrderTracking = () => {
               <CardTitle>Order Status</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex justify-between items-start mb-8 relative">
-                {statusSteps.map((step, index) => {
-                  const Icon = step.icon;
-                  const isActive = index <= currentStepIndex;
-                  const isCompleted = index < currentStepIndex;
-                  
-                  return (
-                    <div key={step.key} className="flex flex-col items-center flex-1 relative z-10">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-colors ${
-                        isActive ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                      }`}>
-                        <Icon className="w-6 h-6" />
+              <div className="relative">
+                <div className="flex justify-between items-start mb-8">
+                  {statusSteps.map((step, index) => {
+                    const Icon = step.icon;
+                    const isActive = index <= currentStepIndex;
+                    
+                    return (
+                      <div key={step.key} className="flex flex-col items-center flex-1 relative z-10">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-colors ${
+                          isActive ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                        }`}>
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        <span className={`text-sm font-medium text-center ${
+                          isActive ? 'text-foreground' : 'text-muted-foreground'
+                        }`}>
+                          {step.label}
+                        </span>
                       </div>
-                      <span className={`text-sm font-medium text-center ${
-                        isActive ? 'text-foreground' : 'text-muted-foreground'
-                      }`}>
-                        {step.label}
-                      </span>
-                      {index < statusSteps.length - 1 && (
-                        <div className={`absolute top-6 left-1/2 h-0.5 w-full transition-colors ${
-                          isCompleted ? 'bg-primary' : 'bg-muted'
-                        }`} style={{ transform: 'translateX(50%)' }} />
-                      )}
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
+                <div className="absolute top-6 left-0 right-0 h-0.5 bg-muted -z-0" style={{ width: '100%', transform: 'translateY(-50%)' }}>
+                  <div 
+                    className="h-full bg-primary transition-all duration-500" 
+                    style={{ width: `${(currentStepIndex / (statusSteps.length - 1)) * 100}%` }}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

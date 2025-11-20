@@ -1,18 +1,36 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useEffect } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, total } = useCart();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleCheckout = () => {
+    if (!user) {
+      toast({
+        title: "Please sign in",
+        description: "You need to be logged in to proceed to checkout",
+        variant: "destructive"
+      });
+      navigate('/auth');
+      return;
+    }
+    navigate('/checkout');
+  };
 
   if (cart.length === 0) {
     return (
@@ -115,8 +133,8 @@ const Cart = () => {
                     </div>
                   </div>
                   
-                  <Button asChild size="lg" className="w-full">
-                    <Link to="/checkout">Proceed to Checkout</Link>
+                  <Button size="lg" className="w-full" onClick={handleCheckout}>
+                    Proceed to Checkout
                   </Button>
                 </CardContent>
               </Card>

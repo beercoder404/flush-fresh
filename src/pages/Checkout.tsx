@@ -22,13 +22,18 @@ const checkoutSchema = z.object({
 
 const Checkout = () => {
   const { cart, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 
   if (!user) {
     navigate('/auth');
+    return null;
+  }
+
+  if (isAdmin) {
+    navigate('/admin/dashboard');
     return null;
   }
 
