@@ -6,6 +6,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Package, ShoppingBag, DollarSign, LogOut } from "lucide-react";
 import { ProtectedAdminRoute } from "./ProtectedRoute";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Order {
   id: string;
@@ -20,6 +30,7 @@ const AdminDashboardContent = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
+  const [showSignOutDialog, setShowSignOutDialog] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -45,7 +56,7 @@ const AdminDashboardContent = () => {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => signOut()}
+            onClick={() => setShowSignOutDialog(true)}
           >
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
@@ -137,6 +148,21 @@ const AdminDashboardContent = () => {
           </Card>
         </div>
       </main>
+
+      <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign Out</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to sign out? You will need to sign in again to access the admin dashboard.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => signOut()}>Sign Out</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

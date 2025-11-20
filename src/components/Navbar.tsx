@@ -5,6 +5,16 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sprout } from "lucide-react";
 import { useState, useEffect } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
 
 const Navbar = () => {
   const { cart } = useCart();
@@ -12,6 +22,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showSignOutDialog, setShowSignOutDialog] = useState(false);
   
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   
@@ -153,7 +164,7 @@ const Navbar = () => {
                     </Button>
                   </Link>
                 )}
-                <Button variant="outline" size="sm" onClick={() => signOut()} className="hidden sm:flex">
+                <Button variant="outline" size="sm" onClick={() => setShowSignOutDialog(true)} className="hidden sm:flex">
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
@@ -258,7 +269,7 @@ const Navbar = () => {
                     </>
                   )}
                   <button 
-                    onClick={() => { signOut(); setMobileMenuOpen(false); }}
+                    onClick={() => { setShowSignOutDialog(true); setMobileMenuOpen(false); }}
                     className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left px-2 py-1"
                   >
                     Sign Out
@@ -277,6 +288,21 @@ const Navbar = () => {
           </div>
         )}
       </div>
+
+      <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign Out</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to sign out? You will need to sign in again to access your account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => signOut()}>Sign Out</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </nav>
   );
 };
