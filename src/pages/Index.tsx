@@ -8,16 +8,16 @@ import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAdmin) {
+    if (!loading && isAdmin) {
       navigate('/admin/dashboard');
     }
-  }, [isAdmin, navigate]);
+  }, [isAdmin, loading, navigate]);
 
-  if (isAdmin) {
+  if (loading || isAdmin) {
     return null;
   }
 
