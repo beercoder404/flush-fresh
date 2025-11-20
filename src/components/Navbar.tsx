@@ -65,64 +65,91 @@ const Navbar = () => {
           </button>
           
           <div className="hidden md:flex items-center gap-8">
-            <button 
-              onClick={handleHomeClick}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Home
-            </button>
-            <button 
-              onClick={() => scrollToSection('products')}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Shop
-            </button>
-            <button 
-              onClick={() => scrollToSection('about')}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              About
-            </button>
-            <Link 
-              to="/contact" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Contact
-            </Link>
+            {!isAdmin && (
+              <>
+                <button 
+                  onClick={handleHomeClick}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Home
+                </button>
+                <button 
+                  onClick={() => scrollToSection('products')}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Shop
+                </button>
+                <button 
+                  onClick={() => scrollToSection('about')}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  About
+                </button>
+                <Link 
+                  to="/contact" 
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Contact
+                </Link>
+              </>
+            )}
+            {isAdmin && (
+              <>
+                <Link 
+                  to="/admin/dashboard" 
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  to="/admin/orders" 
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Orders
+                </Link>
+                <Link 
+                  to="/admin/products" 
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Products
+                </Link>
+              </>
+            )}
           </div>
           
           <div className="flex items-center gap-2">
-            <Link to="/cart" className="hidden sm:block">
-              <Button variant="ghost" size="sm">
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Cart ({totalItems})
-              </Button>
-            </Link>
-            
-            <Link to="/cart" className="sm:hidden">
-              <Button variant="ghost" size="sm">
-                <ShoppingCart className="h-4 w-4" />
-              </Button>
-            </Link>
+            {!isAdmin && (
+              <>
+                <Link to="/cart" className="hidden sm:block">
+                  <Button variant="ghost" size="sm">
+                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    Cart ({totalItems})
+                  </Button>
+                </Link>
+                
+                <Link to="/cart" className="sm:hidden">
+                  <Button variant="ghost" size="sm">
+                    <ShoppingCart className="h-4 w-4" />
+                  </Button>
+                </Link>
+              </>
+            )}
             
             {user ? (
               <>
-                <Link to="/orders" className="hidden sm:block">
-                  <Button variant="outline" size="sm">
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    My Orders
-                  </Button>
-                </Link>
-                <Link to="/profile" className="hidden sm:block">
-                  <Button variant="outline" size="sm">
-                    <User className="h-4 w-4 mr-2" />
-                    Profile
-                  </Button>
-                </Link>
-                {isAdmin && (
-                  <Link to="/admin/products" className="hidden lg:block">
+                {!isAdmin && (
+                  <Link to="/orders" className="hidden sm:block">
                     <Button variant="outline" size="sm">
-                      Admin
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      My Orders
+                    </Button>
+                  </Link>
+                )}
+                {!isAdmin && (
+                  <Link to="/profile" className="hidden sm:block">
+                    <Button variant="outline" size="sm">
+                      <User className="h-4 w-4 mr-2" />
+                      Profile
                     </Button>
                   </Link>
                 )}
@@ -154,56 +181,81 @@ const Navbar = () => {
         {mobileMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
             <div className="flex flex-col space-y-3">
-              <button 
-                onClick={handleHomeClick}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left px-2 py-1"
-              >
-                Home
-              </button>
-              <button 
-                onClick={() => scrollToSection('products')}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left px-2 py-1"
-              >
-                Shop
-              </button>
-              <button 
-                onClick={() => scrollToSection('about')}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left px-2 py-1"
-              >
-                About
-              </button>
-              <Link 
-                to="/contact" 
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
+              {!isAdmin && (
+                <>
+                  <button 
+                    onClick={handleHomeClick}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left px-2 py-1"
+                  >
+                    Home
+                  </button>
+                  <button 
+                    onClick={() => scrollToSection('products')}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left px-2 py-1"
+                  >
+                    Shop
+                  </button>
+                  <button 
+                    onClick={() => scrollToSection('about')}
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors text-left px-2 py-1"
+                  >
+                    About
+                  </button>
+                  <Link 
+                    to="/contact" 
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Contact
+                  </Link>
+                </>
+              )}
+              
+              {isAdmin && (
+                <>
+                  <Link 
+                    to="/admin/dashboard" 
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link 
+                    to="/admin/orders" 
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Orders
+                  </Link>
+                  <Link 
+                    to="/admin/products" 
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Products
+                  </Link>
+                </>
+              )}
               
               {user ? (
                 <>
-                  <Link 
-                    to="/orders" 
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    My Orders
-                  </Link>
-                  <Link 
-                    to="/profile" 
-                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
-                  {isAdmin && (
-                    <Link 
-                      to="/admin/products" 
-                      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Admin Dashboard
-                    </Link>
+                  {!isAdmin && (
+                    <>
+                      <Link 
+                        to="/orders" 
+                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        My Orders
+                      </Link>
+                      <Link 
+                        to="/profile" 
+                        className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Profile
+                      </Link>
+                    </>
                   )}
                   <button 
                     onClick={() => { signOut(); setMobileMenuOpen(false); }}
