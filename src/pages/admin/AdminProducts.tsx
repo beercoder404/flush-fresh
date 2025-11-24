@@ -77,6 +77,8 @@ const AdminProductsContent = () => {
     ingredients: '',
     how_to_use: ''
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const { data: products, isLoading } = useQuery({
     queryKey: ['admin-products'],
@@ -153,6 +155,7 @@ const AdminProductsContent = () => {
       how_to_use: ''
     });
     setEditingProduct(null);
+    setImageFile(null);
   };
 
   const handleEdit = (product: Product) => {
@@ -171,24 +174,72 @@ const AdminProductsContent = () => {
     setDialogOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const uploadImage = async (file: File): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const productData = {
-      name: formData.name,
-      description: formData.description,
-      price: parseFloat(formData.price),
-      size: formData.size,
-      category: formData.category,
-      image_url: formData.image_url,
-      benefits: formData.benefits.split('\n').filter(b => b.trim()),
-      ingredients: formData.ingredients.split('\n').filter(i => i.trim()),
-      how_to_use: formData.how_to_use.split('\n').filter(h => h.trim())
-    };
-
-    // Validate the product data
     try {
+      setUploading(true);
+      let imageUrl = formData.image_url;
+
+      // Upload new image if one is selected
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
+      // If no image URL and no file, show error
+      if (!imageUrl) {
+        toast({
+          title: 'Validation Error',
+          description: 'Please upload a product image',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      const productData = {
+        name: formData.name,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        size: formData.size,
+        category: formData.category,
+        image_url: imageUrl,
+        benefits: formData.benefits.split('\n').filter(b => b.trim()),
+        ingredients: formData.ingredients.split('\n').filter(i => i.trim()),
+        how_to_use: formData.how_to_use.split('\n').filter(h => h.trim())
+      };
+
+      // Validate the product data
       productSchema.parse(productData);
+
+      if (editingProduct) {
+        updateMutation.mutate({ id: editingProduct.id, data: productData });
+      } else {
+        createMutation.mutate(productData);
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const firstError = error.errors[0];
@@ -197,14 +248,15 @@ const AdminProductsContent = () => {
           description: firstError.message,
           variant: 'destructive'
         });
-        return;
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Failed to process product',
+          variant: 'destructive'
+        });
       }
-    }
-
-    if (editingProduct) {
-      updateMutation.mutate({ id: editingProduct.id, data: productData });
-    } else {
-      createMutation.mutate(productData);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -284,14 +336,19 @@ const AdminProductsContent = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="image_url">Image URL</Label>
+                  <Label htmlFor="image">Product Image</Label>
                   <Input
-                    id="image_url"
-                    type="url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    required
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    required={!editingProduct && !formData.image_url}
                   />
+                  {(formData.image_url || imageFile) && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {imageFile ? `Selected: ${imageFile.name}` : 'Current image will be kept if no new file is selected'}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -331,8 +388,8 @@ const AdminProductsContent = () => {
                   <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
-                    {createMutation.isPending || updateMutation.isPending ? 'Saving...' : editingProduct ? 'Update Product' : 'Add Product'}
+                  <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending || uploading}>
+                    {uploading ? 'Uploading...' : createMutation.isPending || updateMutation.isPending ? 'Saving...' : editingProduct ? 'Update Product' : 'Add Product'}
                   </Button>
                 </div>
               </form>

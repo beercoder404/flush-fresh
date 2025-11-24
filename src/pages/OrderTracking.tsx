@@ -86,7 +86,7 @@ const OrderTracking = () => {
   const statusSteps = [
     { key: 'processing', label: 'Processing', icon: Package },
     { key: 'shipped', label: 'Shipped', icon: Truck },
-    { key: 'delivered', label: 'Delivered', icon: CheckCircle }
+    { key: 'dispatched', label: 'Dispatched', icon: CheckCircle }
   ];
 
   const currentStepIndex = statusSteps.findIndex(s => s.key === order.status);

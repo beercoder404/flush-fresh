@@ -1,21 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Package, ShoppingBag, DollarSign, LogOut } from "lucide-react";
+import { Package, ShoppingBag, DollarSign } from "lucide-react";
 import { ProtectedAdminRoute } from "./ProtectedRoute";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import AdminLayout from "@/components/AdminLayout";
 
 interface Order {
   id: string;
@@ -27,10 +17,7 @@ interface Order {
 }
 
 const AdminDashboardContent = () => {
-  const { signOut } = useAuth();
-  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
-  const [showSignOutDialog, setShowSignOutDialog] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -49,22 +36,12 @@ const AdminDashboardContent = () => {
   const pendingOrders = orders.filter(o => o.status === 'processing').length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-display font-bold">Admin Dashboard</h1>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setShowSignOutDialog(true)}
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
+    <AdminLayout>
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-display font-bold">Dashboard</h1>
+          <p className="text-muted-foreground mt-2">Overview of your store performance</p>
         </div>
-      </header>
-      
-      <main className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -116,7 +93,7 @@ const AdminDashboardContent = () => {
                 <Link to="/admin/orders">Manage Orders ({pendingOrders} pending)</Link>
               </Button>
               <Button asChild className="w-full" variant="outline">
-                <Link to="/">View Store</Link>
+                <Link to="/admin/products">Manage Products</Link>
               </Button>
             </CardContent>
           </Card>
@@ -147,23 +124,8 @@ const AdminDashboardContent = () => {
             </CardContent>
           </Card>
         </div>
-      </main>
-
-      <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sign Out</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to sign out? You will need to sign in again to access the admin dashboard.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => signOut()}>Sign Out</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+      </div>
+    </AdminLayout>
   );
 };
 
