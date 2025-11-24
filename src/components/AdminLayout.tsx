@@ -4,16 +4,27 @@ import { Button } from '@/components/ui/button';
 import { LayoutDashboard, Package, ShoppingCart, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showSignOutDialog, setShowSignOutDialog] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    navigate('/auth');
   };
 
   const navItems = [
@@ -58,7 +69,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <Button
                   variant="ghost"
                   className="w-full justify-start gap-x-3"
-                  onClick={handleSignOut}
+                  onClick={() => setShowSignOutDialog(true)}
                 >
                   <LogOut className="h-6 w-6" />
                   Sign Out
@@ -80,7 +91,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           <Menu className="h-6 w-6" />
         </button>
         <div className="flex-1 text-sm font-semibold leading-6 text-foreground">Admin Panel</div>
-        <Button variant="ghost" size="icon" onClick={handleSignOut}>
+        <Button variant="ghost" size="icon" onClick={() => setShowSignOutDialog(true)}>
           <LogOut className="h-5 w-5" />
         </Button>
       </div>
@@ -132,6 +143,21 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="lg:pl-64">
         <div className="px-4 py-10 sm:px-6 lg:px-8">{children}</div>
       </main>
+
+      <AlertDialog open={showSignOutDialog} onOpenChange={setShowSignOutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sign Out</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to sign out? You will need to sign in again to access the admin panel.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSignOut}>Sign Out</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

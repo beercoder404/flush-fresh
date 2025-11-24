@@ -25,6 +25,11 @@ const Navbar = () => {
   const [showSignOutDialog, setShowSignOutDialog] = useState(false);
   
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
   
   const scrollToSection = (sectionId: string) => {
     setMobileMenuOpen(false);
@@ -299,7 +304,7 @@ const Navbar = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => signOut()}>Sign Out</AlertDialogAction>
+            <AlertDialogAction onClick={handleSignOut}>Sign Out</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
