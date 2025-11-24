@@ -98,10 +98,14 @@ export type Database = {
           customer_name: string
           email: string
           id: string
+          payment_intent_id: string | null
+          payment_method: string | null
+          payment_status: string | null
           phone: string
           status: string
           stripe_payment_intent_id: string | null
           total: number
+          transaction_id: string | null
           updated_at: string
           user_id: string
         }
@@ -111,10 +115,14 @@ export type Database = {
           customer_name: string
           email: string
           id?: string
+          payment_intent_id?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
           phone: string
           status?: string
           stripe_payment_intent_id?: string | null
           total: number
+          transaction_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -124,10 +132,14 @@ export type Database = {
           customer_name?: string
           email?: string
           id?: string
+          payment_intent_id?: string | null
+          payment_method?: string | null
+          payment_status?: string | null
           phone?: string
           status?: string
           stripe_payment_intent_id?: string | null
           total?: number
+          transaction_id?: string | null
           updated_at?: string
           user_id?: string
         }

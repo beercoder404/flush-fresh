@@ -221,7 +221,7 @@ const AdminOrdersContent = () => {
                         <SelectContent>
                           <SelectItem value="processing">Processing</SelectItem>
                           <SelectItem value="shipped">Shipped</SelectItem>
-                          <SelectItem value="delivered">Delivered</SelectItem>
+                          <SelectItem value="dispatched">Dispatched - Delivery in 7 days</SelectItem>
                           <SelectItem value="cancelled">Cancelled</SelectItem>
                         </SelectContent>
                       </Select>
